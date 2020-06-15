@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      @font-face {
+        font-family: DigitalFont;
+        src: url("./digital-7.ttf") format("truetype");
+      }
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      .Wrapper {
+        width: 100vw;
+        height: 100vh;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        background-color: black;
+      }
+      .GamePad {
+        position: relative;
+        height: 60vh;
+        width: 100vh;
+        background-color: black;
+      }
+      .Ball {
+        position: absolute;
+        border-radius: 50%;
+        z-index: 10;
+      }
+      #startBtn {
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 10vw;
+        height: 3vw;
+        border-radius: 1vw;
+      }
+      #startBtn:hover {
+        background-color: yellow;
+      }
+      #startBtn:active {
+        background-color: black;
+        color: white;
+      }
+      .InfoBar {
+        background-color: black;
+        width: 100vw;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+      .Reading {
+        color: red;
+        font-size: 30px;
+        font-weight: bold;
+        font-family: DigitalFont;
+      }
+      .Track {
+        width: 100%;
+        height: 100%;
+      }
+      .row {
+        display: flex;
+        align-items: flex-start;
+      }
+      #SpeedUnit {
+        background-color: black;
+      }
+      #Speedometer {
+        background-color: black;
+      }
+      #AcceleUnit {
+        background-color: black;
+      }
+      #Accelemeter {
+        background-color: black;
+      }
+      #TanAcceleUnit {
+        background-color: black;
+      }
+      #TanAccelemeter {
+        background-color: black;
+      }
+      #InfoUnit,
+      #ControlUnit {
+        height: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: stretch;
+        background-color: black;
+      }
+      #controlTrack,
+      #toggleInstruction {
+        background-color: yellow;
+        height: 5vh;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        font-family: DigitalFont;
+        border-radius: 2vh;
+      }
+      #TrackName {
+        color: white;
+      }
+      #Modal {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: darkgrey;
+        z-index: 11;
+      }
+      #closeBtn {
+        top: 0;
+        right: 0;
+        position: fixed;
+        width: 5vh;
+        height: 5vh;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        color: red;
+        font-size: 5vh;
+        font-weight: bold;
+      }
+    </style>
+    <script src="http://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
+    <script src="./math.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class="Wrapper">
+      <div id="Modal">
+        <button id="closeBtn" onclick="toggleInstruction()">X</button>
+        <div class="Reading" style="font-size: 50px; color: brown;">
+          Introduction
+        </div>
+        <div class="Reading" style="color: brown;">
+          Press "w", "s", "a", "d" to move forward, backward, left, and right.
+        </div>
+        <div class="Reading" style="color: brown;">
+          The speed and acceleration of the car are displayed at the bottom.
+        </div>
+        <div class="Reading" style="color: blue;">
+          Blue parts represent the starting line of a lap
+        </div>
+        <div class="Reading">
+          Red parts represent curbs
+        </div>
+        <div class="Reading" style="color: green;">
+          Green parts represent grass with lower friction.
+        </div>
+        <div class="Reading" style="color: black;">
+          Black parts represent high friction zones.
+        </div>
+        <div class="Reading" style="color: white;">
+          White parts represent race track.
+        </div>
+        <div class="Reading" style="color: brown;">
+          You could switch between different tracks with "Change Track" button
+        </div>
+        <div class="Reading" style="color: brown;">
+          Tracks could be customized with any image drawn in red, green, blue,
+          black and white.
+        </div>
+        <div class="Reading" style="color: brown;">
+          Put your image inside the folder and append your config in track.js.
+        </div>
+      </div>
+      <div class="GamePad"></div>
+      <div class="InfoBar">
+        <div id="SpeedUnit">
+          <canvas id="Speedometer"></canvas>
+          <div class="Reading">Speed</div>
+          <div class="Reading" id="SpeedReading">0</div>
+        </div>
+        <div id="AcceleUnit">
+          <canvas id="Accelemeter"></canvas>
+          <div class="Reading">Acceleration</div>
+          <div class="Reading" id="AcceleReading">0</div>
+        </div>
+        <div id="TanAcceleUnit">
+          <canvas id="TanAccelemeter"></canvas>
+          <div class="Reading">G Force</div>
+          <div class="Reading" id="TanAcceleReading">0</div>
+        </div>
+        <div id="InfoUnit">
+          <div class="row">
+            <div class="Reading" style="padding-right: 10px;">Lap:</div>
+            <div class="Reading" id="LapCount">0</div>
+          </div>
+          <div class="row">
+            <div class="Reading" style="padding-right: 10px;">Lap Time:</div>
+            <div class="Reading" id="LapTime">0:00:00</div>
+          </div>
+          <div class="row">
+            <div class="Reading" style="padding-right: 10px;">
+              Best Lap Time:
+            </div>
+            <div class="Reading" id="BestLapTime">0:00:00</div>
+          </div>
+          <div class="row">
+            <div class="Reading" style="padding-right: 10px;">
+              Track Name:
+            </div>
+            <div class="Reading" id="TrackName"></div>
+          </div>
+        </div>
+        <div id="ControlUnit">
+          <button id="controlTrack">Change Track</button>
+          <button id="toggleInstruction" onclick="toggleInstruction()">
+            Show Instruction
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="./index.min.js"></script>
+  </body>
+</html>
