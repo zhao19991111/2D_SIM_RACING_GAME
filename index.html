@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat&family=MuseoModerno&display=swap"
+      rel="stylesheet"
+    />
     <style>
       @font-face {
         font-family: DigitalFont;
@@ -60,6 +64,12 @@
         font-weight: bold;
         font-family: DigitalFont;
       }
+      .Instruction {
+        font-family: "MuseoModerno", cursive;
+        color: #bebebe;
+        font-size: 20px;
+        font-weight: bold;
+      }
       .controlReading,
       .controlReadingValue {
         color: green;
@@ -74,6 +84,11 @@
       .row {
         display: flex;
         align-items: flex-start;
+      }
+      #Hint {
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       #SpeedUnit {
         background-color: black;
@@ -104,6 +119,10 @@
         align-items: stretch;
         background-color: black;
       }
+      #InfoUnit {
+        width: 15vw;
+        min-width: 200px;
+      }
       .controlBtn {
         display: flex;
         justify-content: center;
@@ -118,9 +137,23 @@
       }
       .controlBtn:hover {
         background-color: red;
+        color: white;
+      }
+      #showControl {
+        background-color: white;
+      }
+      #showControl:hover {
+        background-color: red;
+        color: white;
       }
       #TrackName {
         color: white;
+      }
+      #toggleInstruction {
+        animation-name: blink;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-duration: 3s;
       }
       .Modal {
         width: 100%;
@@ -130,7 +163,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-color: darkgrey;
+        background-color: #5c554b;
         z-index: 11;
       }
       .closeBtn {
@@ -153,6 +186,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        padding: 10px;
       }
       /* The slider itself */
       .slider {
@@ -188,7 +222,23 @@
         background: #4caf50; /* Green background */
         cursor: pointer; /* Cursor on hover */
       }
+
+      @keyframes blink {
+        0% {
+          box-shadow: 0px 0px 20px red;
+          color: red;
+        }
+        50% {
+          box-shadow: none;
+          color: black;
+        }
+        100% {
+          box-shadow: 0px 0px 20px red;
+          color: red;
+        }
+      }
     </style>
+
     <script src="https://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
     <script src="./math.js" type="text/javascript"></script>
   </head>
@@ -196,40 +246,62 @@
     <div class="Wrapper">
       <div class="Modal" id="Instruction">
         <button class="closeBtn" onclick="toggleInstruction()">X</button>
-        <div class="Reading" style="font-size: 50px; color: brown;">
-          Introduction
+        <div class="Instruction" style="font-size: 50px;">
+          Instruction
         </div>
-        <div class="Reading" style="color: brown;">
-          Press "w", "s", "a", "d" to accelerate, decelerate, turn left, and
-          turn right.
+        <div class="Instruction">
+          Press "W", "S", "A", "D" to accelerate, decelerate, turn left, and
+          turn right
         </div>
-        <div class="Reading" style="color: brown;">
-          The speed and acceleration of the car are displayed at the bottom.
+        <div class="Instruction">
+          Press "R" to restore the car at initial position
         </div>
-        <div class="Reading" style="color: blue;">
-          Blue parts represent the starting line of a lap
+        <div class="Instruction">
+          Current speed and acceleration of the car are displayed at the bottom
         </div>
-        <div class="Reading">
+        <div class="Instruction" style="color: #4586ff;">
+          Blue parts represent the starting point of a lap
+        </div>
+        <div class="Instruction" style="color: #ee3322;">
           Red parts represent curbs
         </div>
-        <div class="Reading" style="color: green;">
-          Green parts represent grass with lower friction.
+        <div class="Instruction" style="color: rgb(40, 153, 40);">
+          Green parts represent grass with low friction
         </div>
-        <div class="Reading" style="color: black;">
-          Black parts represent high friction zones.
+        <div class="Instruction" style="color: black;">
+          Black parts represent gravel with high friction
         </div>
-        <div class="Reading" style="color: white;">
-          White parts represent race track.
+        <div class="Instruction" style="color: white;">
+          White parts represent the race track
         </div>
-        <div class="Reading" style="color: brown;">
-          You could switch between different tracks with "Change Track" button
+        <div class="Instruction" style="color: yellow;">
+          NOTE: Only the position of the center of the car matters
         </div>
-        <div class="Reading" style="color: brown;">
-          Tracks could be customized with any image drawn in red, green, blue,
-          black and white.
+        <div class="Instruction">
+          Show this instruction page with
+          <span style="color: yellow;">Show Instruction</span> button
         </div>
-        <div class="Reading" style="color: brown;">
-          Put your image inside the folder and append your config in track.js.
+        <div class="Instruction">
+          Switch to the next available track with
+          <span style="color: yellow;">Next Track</span> button
+        </div>
+        <div class="Instruction">
+          Change the background light of the car with
+          <span style="color: yellow;">Change Car Light</span> button
+        </div>
+        <div class="Instruction">
+          Adjust car and track parameters with
+          <span style="color: yellow;">More Control</span> button
+        </div>
+        <div class="Instruction">
+          Add your own track with any image drawn in red, green, blue, black and
+          white
+        </div>
+        <div class="Instruction">
+          You are free to resize the window and the game won't be affected
+        </div>
+        <div class="Instruction">
+          Feel free to contribute : )
         </div>
       </div>
       <div class="Modal" id="Control">
@@ -363,7 +435,7 @@
         </div>
         <div id="TanAcceleUnit">
           <canvas id="TanAccelemeter"></canvas>
-          <div class="Reading">G Force</div>
+          <div class="Reading">Lateral Acceleration</div>
           <div class="Reading" id="TanAcceleReading">0</div>
         </div>
         <div id="InfoUnit">
@@ -372,24 +444,32 @@
             <div class="Reading" id="LapCount">0</div>
           </div>
           <div class="row">
-            <div class="Reading" style="padding-right: 10px;">Lap Time:</div>
+            <div class="Reading" style="padding-right: 10px;">Current:</div>
             <div class="Reading" id="LapTime">0:00:00</div>
           </div>
           <div class="row">
             <div class="Reading" style="padding-right: 10px;">
-              Best Lap Time:
+              Best:
             </div>
             <div class="Reading" id="BestLapTime">0:00:00</div>
           </div>
           <div class="row">
             <div class="Reading" style="padding-right: 10px;">
-              Track Name:
+              Target:
+            </div>
+            <div class="Reading" id="TargetTime">0:00:00</div>
+          </div>
+          <div class="row">
+            <div class="Reading" style="padding-right: 10px;">
+              Track:
             </div>
             <div class="Reading" id="TrackName"></div>
           </div>
         </div>
         <div id="ControlUnit">
-          <button class="controlBtn" id="controlTrack">Change Track</button>
+          <button class="controlBtn" disabled="true" id="controlTrack">
+            Next Track
+          </button>
           <button class="controlBtn" id="changeCarColor">
             Change Car Light
           </button>
@@ -405,6 +485,7 @@
           </button>
         </div>
       </div>
+      <div id="Hint" class="Reading"></div>
     </div>
     <script src="./index.min.js"></script>
   </body>
